@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"><title>{{ username }} 的主页</title><style nonce="{{ csp_nonce }}">
+body{font-family:system-ui;background:#f5f5f5;padding:20px}
+body.dark-mode{background:#121212;color:#e0e0e0}
+.container{max-width:600px;margin:0 auto;background:white;padding:30px;border-radius:12px}
+.dark-mode .container{background:#1e1e1e}
+.avatar{width:80px;height:80px;border-radius:50%}
+</style></head><body>
+<div class="container">
+    <img src="/avatar/{{ username }}" class="avatar">
+    <h2>{{ username }}</h2>
+    <h3>最近文章</h3>
+    {% for a in articles %}
+        <p><a href="/news/{{ a.id }}">{{ a.title }}</a> - {{ a.time }}</p>
+    {% endfor %}
+    <a href="/news">返回</a>
+</div>
+</body></html>

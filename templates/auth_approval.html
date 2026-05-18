@@ -1,0 +1,10 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>作者审核</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style nonce="{{ csp_nonce }}">body{font-family:system-ui;max-width:900px;margin:20px auto;padding:0 10px}
+body.dark-mode{background:#121212;color:#e0e0e0}
+.table-container{overflow-x:auto}table{width:100%;min-width:300px;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #eee}button{padding:5px 10px}.back-link{margin-bottom:20px;display:inline-block}
+#darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+#darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+</style></head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<h2>✍️ 待审作者</h2><p><a href="/admin" class="back-link">← 返回管理面板</a></p><div class="table-container"><table><thead><tr><th>用户名</th><th>邮箱</th><th>操作</th></tr></thead><tbody>{% for a in pending_authors %}<tr><td><img src="/avatar/{{ a.username }}" width="30" style="border-radius:50%;vertical-align:middle"> {{ a.username|e }}</td><td>{{ a.email|e }}</td><td><form method="post" action="/admin/approve_author" style="display:inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="username" value="{{ a.username }}"><button>✅ 通过</button></form><form method="post" action="/admin/reject_author" style="display:inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="username" value="{{ a.username }}"><button>❌ 拒绝</button></form></td></tr>{% endfor %}</tbody></table></div>
+<script nonce="{{ csp_nonce }}">(function(){if(localStorage.getItem("darkMode")==="true") document.body.classList.add("dark-mode");})();function toggleDarkMode(){const isDark=document.body.classList.toggle("dark-mode");localStorage.setItem("darkMode",isDark);}</script>
+</body></html>

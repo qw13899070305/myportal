@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{{ title|e }} · 左派</title>
+<meta name="csrf-token" content="{{ csrf_token }}">
+<style nonce="{{ csp_nonce }}">
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:"Noto Serif SC",serif;background:#faf9f6;color:#2c2c2c;line-height:1.8;padding:20px}
+body.dark-mode{background:#121212;color:#e0e0e0}
+body.dark-mode .container{background:#1e1e1e;border-color:#444}
+body.dark-mode .comments{background:#1a1a1a;border-top-color:#444}
+body.dark-mode .comment{background:#2c2c2c;color:#ddd}
+body.dark-mode .comment-author{color:#eee}
+body.dark-mode .comment-time{color:#aaa}
+body.dark-mode .comment-form textarea{background:#333;color:#eee;border-color:#555}
+body.dark-mode .comment-form button{background:#b22222}
+.container{max-width:760px;margin:40px auto;background:#fff;border:1px solid #e0d6c2;border-radius:6px;padding:40px;box-shadow:0 2px 8px rgba(0,0,0,.04)}h1{font-size:2rem;font-weight:700;margin-bottom:10px;color:#1a1a1a}.meta{font-size:.9rem;color:#8b7355;margin-bottom:20px;font-family:system-ui}.tag{display:inline-block;padding:2px 12px;border-radius:3px;font-size:.75rem;font-family:system-ui;margin-left:10px}.tag.key{background:#fce4e4;color:#8b0000}.tag.fun{background:#fff3e0;color:#e65100}.tag.internal{background:#d4c4f0;color:#4a148c}.article-tags{margin-left:10px;display:inline-block}.article-tags .tag{background:#e8f0fe;color:#1890ff}hr{border:none;border-top:1px solid #e0d6c2;margin:20px 0}.content{font-size:1.05rem;line-height:2;word-break:break-word}.like-btn,.bookmark-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;color:#b22222}.back{display:inline-block;margin-top:30px;color:#b22222;text-decoration:none;font-family:system-ui;font-size:.9rem}.back:hover{text-decoration:underline}.comments{margin-top:40px;border-top:1px solid #e0d6c2;padding-top:20px}.comment{background:#faf9f6;padding:12px;margin-bottom:12px;border-radius:6px}.comment-author{font-weight:bold;margin-bottom:4px}.comment-time{font-size:.75rem;color:#888}.comment-form{margin-top:20px;display:flex;flex-direction:column;gap:10px}.comment-form textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:4px;font-family:inherit}.comment-form button{background:#b22222;color:#fff;border:none;padding:8px 20px;border-radius:4px;cursor:pointer}.comment-likes{font-size:.8rem;color:#888;margin-left:10px;cursor:pointer}
+#darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+#darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+</style></head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<div class="container"><h1>{{ title|e }}</h1><div class="meta">{{ author|e }} · {{ time }} · 👁️ {{ view_count }} · 👍 <span id="likeCount">{{ like_count }}</span><button class="like-btn" onclick="likeArticle()">❤️ 点赞</button><button class="bookmark-btn" onclick="bookmarkArticle()">🔖 收藏</button><div class="article-tags">{% for tag in tags %}<span class="tag">#{{ tag|e }}</span>{% endfor %}</div><span class="tag {{ category }}">{{ {'key':'重点新闻','fun':'娱乐区','internal':'内部'}.get(category, category) }}</span></div><hr><div class="content">{{ content|safe }}</div><div class="comments"><h3>📝 评论 ({{ comments|length }})</h3>{% for c in comments %}<div class="comment"><div class="comment-author">{{ c.author|e }}</div><div class="comment-time">{{ c.time }}</div><div>{{ c.content|e }}</div><div class="comment-likes" onclick="likeComment({{ c.id }})">👍 {{ c.likes }}</div></div>{% endfor %}<form class="comment-form" method="post" action="/news/{{ aid }}/comment"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><textarea name="content" placeholder="写下你的评论..." required></textarea><button type="submit">发表评论</button></form></div><a href="{{ '/internal' if category=='internal' else '/news' }}" class="back">← 返回</a></div><script nonce="{{ csp_nonce }}">
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+function likeArticle(){
+    fetch('/news/{{ aid }}/like',{
+        method:'POST',
+        headers:{'X-CSRF-Token':csrfToken,'X-Requested-With':'XMLHttpRequest'}
+    }).then(r=>r.json()).then(data=>{
+        if(data.success) document.getElementById('likeCount').innerText=data.likes;
+        else alert(data.error||'点赞失败');
+    }).catch(e=>alert('网络错误'));
+}
+function bookmarkArticle(){
+    fetch('/news/{{ aid }}/bookmark',{
+        method:'POST',
+        headers:{'X-CSRF-Token':csrfToken,'X-Requested-With':'XMLHttpRequest'}
+    }).then(r=>r.json()).then(data=>{
+        alert(data.message || '操作完成');
+    }).catch(e=>alert('网络错误'));
+}
+function likeComment(cid){
+    fetch('/comment/'+cid+'/like',{
+        method:'POST',
+        headers:{'X-CSRF-Token':csrfToken,'X-Requested-With':'XMLHttpRequest'}
+    }).then(r=>r.json()).then(data=>{
+        if(data.success) location.reload();
+    });
+}
+(function(){
+    if(localStorage.getItem('darkMode')==='true') document.body.classList.add('dark-mode');
+})();
+function toggleDarkMode(){
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+}
+</script></body></html>

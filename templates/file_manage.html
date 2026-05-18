@@ -1,0 +1,102 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>文件管理</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style nonce="{{ csp_nonce }}">body{font-family:system-ui,sans-serif;max-width:1000px;margin:20px auto;padding:15px}
+body.dark-mode{background:#121212;color:#e0e0e0}
+body.dark-mode .upload-section{background:#333}
+.table-container{overflow-x:auto}table{width:100%;min-width:600px;border-collapse:collapse;margin-top:20px}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}button{padding:5px 10px;cursor:pointer}.upload-section{margin:20px 0;padding:15px;background:#f9f9f9;border-radius:6px}.back-link{margin-bottom:20px;display:inline-block}
+.breadcrumb{padding:10px 15px;background:#f0f0f0;border-radius:6px;margin-bottom:15px}
+.breadcrumb a{color:#1890ff;text-decoration:none}
+.share-link-btn{color:#ff9800;cursor:pointer;background:none;border:none;text-decoration:underline}
+#darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+#darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+</style></head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<h1>📁 文件管理</h1><p><a href="/admin" class="back-link">← 返回管理面板</a></p>
+<div class="breadcrumb">
+    🏠 <a href="/admin/manage_files">根目录</a>
+    {% if subpath %}
+        {% set parts = subpath.split('/') %}
+        {% set acc = '' %}
+        {% for p in parts %}
+            {% set acc = acc + '/' + p if acc else p %}
+            / <a href="/admin/manage_files/{{ acc }}">{{ p|e }}</a>
+        {% endfor %}
+        {% set parent = parts[:-1] | join('/') %}
+        <span style="margin-left:15px">
+            <a href="/admin/manage_files/{{ parent }}">⬅ 返回上级</a>
+        </span>
+    {% endif %}
+</div>
+<div class="upload-section"><h3>📤 上传文件</h3>
+<form method="post" action="/admin/upload_file" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="subpath" value="{{ subpath or '' }}">
+    <input type="file" name="file" required>
+    <button type="submit">上传到当前文件夹</button>
+</form>
+</div>
+<div class="pagination">{% if page > 1 %}<a href="/admin/manage_files/{{ subpath }}?page={{ page-1 }}">← 上一页</a>{% endif %} 第 {{ page }} / {{ total_pages }} 页 {% if page < total_pages %}<a href="/admin/manage_files/{{ subpath }}?page={{ page+1 }}">下一页 →</a>{% endif %}</div>
+<div class="table-container">
+    <table class="file-manage-table">
+        <thead><tr><th>文件名</th><th>类型</th><th>大小</th><th>操作</th></tr></thead>
+        <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{% if item.is_dir %}<a href="/admin/manage_files/{{ item.path }}">{{ item.icon }} <span class="file-name">{{ item.name|e }}/</span></a>{% else %}{{ item.icon }} <span class="file-name">{{ item.name|e }}</span>{% endif %}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.size }}</td>
+            <td class="actions-cell">
+                {% if item.is_file %}
+                    <a href="/files/{{ item.path }}?action=download">下载</a>
+                    {% if item.can_preview %}
+                        {% if item.is_office %}
+                            <a href="/office_preview/{{ item.path }}" target="_blank">预览</a>
+                        {% elif item.path.lower().endswith('.chm') %}
+                            <a href="/chm_preview/{{ item.path }}" target="_blank">预览</a>
+                        {% elif item.path.lower().endswith(('.djvu', '.djv')) %}
+                            <a href="/djvu_preview/{{ item.path }}" target="_blank">预览</a>
+                        {% else %}
+                            <a href="/files/{{ item.path }}" target="_blank">预览</a>
+                        {% endif %}
+                    {% endif %}
+                    <button onclick="generateShareLink('{{ item.path }}')" class="share-link-btn">🔗 分享</button>
+                    <form method="post" action="/admin/move_file" style="display:inline" onsubmit="return confirm('确定移动此文件？');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="source_path" value="{{ item.path }}">
+                        <input type="text" name="target_folder" placeholder="目标文件夹路径" style="width:120px;padding:2px 8px;border:1px solid #ddd;border-radius:4px">
+                        <button type="submit" style="background:#2196F3;color:#fff;border:none;border-radius:4px">移动</button>
+                    </form>
+                    <form method="post" action="/admin/delete_file" style="display:inline" onsubmit="return confirm('删除此文件？');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <input type="hidden" name="path" value="{{ item.path }}">
+                        <button type="submit" style="background:#f44336;color:#fff;border:none;border-radius:4px">删除</button>
+                    </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script nonce="{{ csp_nonce }}">
+async function generateShareLink(filePath) {
+    const password = prompt("设置分享密码（留空则无密码）:");
+    const expire = prompt("过期时间（小时，留空则24小时）:");
+    const resp = await fetch('/create_share_link', {
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'X-CSRF-Token': document.querySelector('input[name="csrf_token"]').value,
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({path: filePath, password: password || '', expire: expire || '24'})
+    });
+    const data = await resp.json();
+    if(data.success) {
+        prompt("分享链接（复制后分享）:", data.url);
+    } else {
+        alert("创建失败：" + (data.error || '未知错误'));
+    }
+}
+(function(){if(localStorage.getItem("darkMode")==="true") document.body.classList.add("dark-mode");})();
+function toggleDarkMode(){const isDark=document.body.classList.toggle("dark-mode");localStorage.setItem("darkMode",isDark);}
+</script>
+</body></html>

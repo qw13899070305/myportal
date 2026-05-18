@@ -1,0 +1,14 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>文件分享</title><style nonce="{{ csp_nonce }}">
+body{font-family:system-ui;text-align:center;padding:50px}
+body.dark-mode{background:#121212;color:#e0e0e0}
+</style></head><body>
+<h2>📂 文件分享</h2>
+{% if error %}<p style="color:red">{{ error }}</p>{% else %}
+<p>文件名：{{ filename }}</p>
+<p>过期时间：{{ expire }}</p>
+<form method="post" action="/share/{{ token }}">
+    {% if need_password %}<input type="text" name="password" placeholder="请输入提取密码" required>{% endif %}
+    <button type="submit">下载文件</button>
+</form>
+{% endif %}
+</body></html>

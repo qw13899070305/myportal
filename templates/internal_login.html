@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="zh"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内部文章登录</title>
+<style nonce="{{ csp_nonce }}">
+body{font-family:system-ui;background:#f0f2f5;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
+body.dark-mode{background:#121212}
+.container{background:#fff;padding:40px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.1);width:100%;max-width:400px}
+.dark-mode .container{background:#1e1e1e;color:#eee}
+h1{text-align:center;color:#b22222;margin-bottom:20px}
+.tabs{display:flex;margin-bottom:20px}
+.tab{flex:1;text-align:center;padding:10px;cursor:pointer;border-bottom:2px solid transparent}
+.tab.active{border-bottom-color:#b22222;color:#b22222;font-weight:bold}
+.form-box{display:none}
+.form-box.active{display:block}
+input{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:6px;box-sizing:border-box}
+.dark-mode input{background:#2c2c2c;color:#eee;border-color:#555}
+button{width:100%;padding:12px;background:#b22222;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:1rem;margin-top:10px}
+.error{color:#b22222;margin-top:10px}
+.links{margin-top:20px;text-align:center;font-size:.9rem}
+.links a{color:#b22222;text-decoration:none;margin:0 5px}
+.pwd-wrapper{position:relative}
+.pwd-wrapper input{padding-right:40px}
+.toggle-pwd{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer}
+#darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+#darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer}
+</style>
+</head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<div class="container">
+<h1>🔒 内部文章</h1>
+<div class="tabs">
+    <div class="tab active" onclick="switchTab('author')">✍️ 作者登录</div>
+    <div class="tab" onclick="switchTab('admin')">🔐 管理员登录</div>
+</div>
+<form id="authorForm" class="form-box active" method="post" action="/author/login">
+    <input type="hidden" name="next" value="{{ next }}">
+    <input name="username" placeholder="作者用户名" required>
+    <div class="pwd-wrapper"><input type="password" name="password" placeholder="密码" required><span class="toggle-pwd" onclick="togglePwd(this)">👁️</span></div>
+    <button type="submit">登录</button>
+    {% if author_error %}<p class="error">{{ author_error }}</p>{% endif %}
+    <div class="links"><a href="/author/register?next={{ next }}">注册新作者</a></div>
+</form>
+<form id="adminForm" class="form-box" method="post" action="/admin/login">
+    <input type="hidden" name="next" value="{{ next }}">
+    <input name="username" placeholder="管理员用户名" required>
+    <div class="pwd-wrapper"><input type="password" name="password" placeholder="密码" required><span class="toggle-pwd" onclick="togglePwd(this)">👁️</span></div>
+    <button type="submit">登录</button>
+    {% if admin_error %}<p class="error">{{ admin_error }}</p>{% endif %}
+    <div class="links"><a href="/apply_admin">申请成为管理员</a></div>
+</form>
+<div class="links" style="margin-top:15px"><a href="/news">← 返回广场</a></div>
+</div>
+<script nonce="{{ csp_nonce }}">
+function switchTab(type){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.form-box').forEach(f=>f.classList.remove('active'));
+    if(type==='author'){
+        document.querySelector('.tab:first-child').classList.add('active');
+        document.getElementById('authorForm').classList.add('active');
+    } else {
+        document.querySelector('.tab:last-child').classList.add('active');
+        document.getElementById('adminForm').classList.add('active');
+    }
+}
+function togglePwd(btn){
+    const input = btn.parentElement.querySelector('input');
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁️' : '🙈';
+}
+(function(){if(localStorage.getItem('darkMode')==='true') document.body.classList.add('dark-mode');})();
+function toggleDarkMode(){const d=document.body.classList.toggle('dark-mode');localStorage.setItem('darkMode',d);}
+</script></body></html>

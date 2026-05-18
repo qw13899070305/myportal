@@ -1,0 +1,10 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>上传头像</title><style nonce="{{ csp_nonce }}">body{font-family:system-ui;background:#f7f7f7;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
+body.dark-mode{background:#121212}.dark-mode .box{background:#1e1e1e;color:#e0e0e0;border-color:#444}
+.box{background:#fff;padding:30px;border-radius:12px;width:100%;max-width:400px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.1)}img{width:100px;height:100px;border-radius:50%;object-fit:cover;margin-bottom:15px}input,button{margin:10px 0;padding:10px;width:100%}button{background:#b22222;color:#fff;border:none;border-radius:6px;cursor:pointer}
+#darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+#darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+</style></head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<div class="box"><h2>🖼️ 上传头像</h2><img src="{{ avatar_url }}" id="preview"><form method="post" enctype="multipart/form-data"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="file" name="avatar" accept="image/jpeg,image/png,image/gif" required><button type="submit">上传</button></form><p><a href="{{ back_url }}">← 返回</a></p></div>
+<script nonce="{{ csp_nonce }}">(function(){if(localStorage.getItem("darkMode")==="true") document.body.classList.add("dark-mode");})();function toggleDarkMode(){const isDark=document.body.classList.toggle("dark-mode");localStorage.setItem("darkMode",isDark);}</script>
+</body></html>

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Office 文档预览{% endblock %}
+{% block content %}
+<div class="toolbar" style="text-align:center;margin-bottom:20px">
+    <button onclick="location.reload()">🔄 刷新</button>
+    <a href="/files/{{ subpath }}?action=download" style="background:#4CAF50;color:#fff;padding:8px 16px;border-radius:4px;text-decoration:none;margin-left:10px">⬇️ 下载原文件</a>
+</div>
+<div id="preview-container" style="max-width:100%;margin:0 auto;background:#fff;padding:20px;border-radius:8px;overflow:auto"></div>
+<p style="text-align:center"><a href="/files/{{ subpath }}" class="back-link">← 返回</a></p>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.7/dist/docx-preview.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptx-viewjs@0.2.0/dist/pptx-viewjs.min.js"></script>
+<script>
+(async function() {
+    const ext = "{{ ext }}";
+    const container = document.getElementById('preview-container');
+    try {
+        const resp = await fetch('/files/{{ subpath }}?action=download');
+        const blob = await resp.blob();
+        if (ext === '.docx' || ext === '.doc') {
+            await docx.renderAsync(blob, container);
+        } else if (ext === '.xlsx' || ext === '.xls') {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const wb = XLSX.read(e.target.result, {type: 'array'});
+                const sheet = wb.SheetNames[0];
+                const html = XLSX.utils.sheet_to_html(wb.Sheets[sheet]);
+                container.innerHTML = html;
+            };
+            reader.readAsArrayBuffer(blob);
+        } else if (ext === '.pptx' || ext === '.ppt') {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                PptxViewJS.render(e.target.result, container);
+            };
+            reader.readAsArrayBuffer(blob);
+        } else {
+            container.innerHTML = '<p>不支持预览此 Office 格式</p>';
+        }
+    } catch(e) {
+        container.innerHTML = '<p>预览失败，请尝试下载查看</p>';
+    }
+})();
+</script>
+{% endblock %}

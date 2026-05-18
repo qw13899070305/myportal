@@ -1,0 +1,18 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>系统设置</title><style nonce="{{ csp_nonce }}">body{font-family:system-ui;max-width:600px;margin:40px auto;padding:20px}
+body.dark-mode{background:#121212;color:#e0e0e0}
+label{display:block;margin:15px 0}input,select{width:100%;padding:8px;margin-top:5px}button{margin-top:20px;padding:10px;background:#b22222;color:#fff;border:none;border-radius:4px;cursor:pointer}
+#darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+#darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+</style></head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<h1>⚙️ 系统设置</h1><form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label><input type="checkbox" name="registration_enabled" {% if reg_enabled %}checked{% endif %}> 允许新用户注册</label>
+<label>验证码类型: <select name="captcha_type"><option value="math" {% if captcha_type=='math' %}selected{% endif %}>算术验证码</option><option value="simple" {% if captcha_type=='simple' %}selected{% endif %}>简单字符串</option></select></label>
+<label><input type="checkbox" name="email_enabled" {% if email_enabled %}checked{% endif %}> 启用邮件通知</label>
+<label>SMTP服务器: <input name="smtp_server" value="{{ smtp_server }}" placeholder="smtp.example.com"></label>
+<label>SMTP端口: <input name="smtp_port" value="{{ smtp_port }}" placeholder="587"></label>
+<label>SMTP用户名: <input name="smtp_user" value="{{ smtp_user }}" placeholder="user@example.com"></label>
+<label>SMTP密码: <input type="password" name="smtp_password" value="{{ smtp_password }}" placeholder="******"></label>
+<label>通知邮箱（用于接收审核结果）: <input name="notify_email" value="{{ notify_email }}" placeholder="admin@example.com"></label>
+<button type="submit">保存设置</button></form><p><a href="/admin">← 返回管理面板</a></p>
+<script nonce="{{ csp_nonce }}">(function(){if(localStorage.getItem("darkMode")==="true") document.body.classList.add("dark-mode");})();function toggleDarkMode(){const isDark=document.body.classList.toggle("dark-mode");localStorage.setItem("darkMode",isDark);}</script>
+</body></html>

@@ -1,0 +1,10 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>聊天消息管理</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style nonce="{{ csp_nonce }}">body{font-family:system-ui,sans-serif;max-width:900px;margin:20px auto;padding:15px}
+body.dark-mode{background:#121212;color:#e0e0e0}
+.table-container{overflow-x:auto}table{width:100%;min-width:600px;border-collapse:collapse;margin-top:20px}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}button{padding:5px 10px;cursor:pointer}.back-link{margin-bottom:20px;display:inline-block}
+#darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+#darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+</style></head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<h1>💬 聊天消息管理</h1><p><a href="/admin" class="back-link">← 返回管理面板</a></p><div class="table-container"><tr><thead><tr><th>用户</th><th>消息</th><th>时间</th><th>操作</th></tr></thead><tbody>{% for msg in messages %}<tr><td><img src="/avatar/{{ msg.user }}" width="24" style="border-radius:50%;vertical-align:middle"> {{ msg.user|e }}</td><td>{{ msg.text|e }}</td><td>{{ msg.time }}</td><td><form method="post" action="/admin/chat_messages/delete" style="display:inline" onsubmit="return confirm('删除此消息？');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="message_id" value="{{ msg.id }}"><button type="submit" style="background:#f44336;color:#fff;border:none;border-radius:4px">❌ 删除</button></form></td></tr>{% endfor %}</tbody></table></div>
+<script nonce="{{ csp_nonce }}">(function(){if(localStorage.getItem("darkMode")==="true") document.body.classList.add("dark-mode");})();function toggleDarkMode(){const isDark=document.body.classList.toggle("dark-mode");localStorage.setItem("darkMode",isDark);}</script>
+</body></html>

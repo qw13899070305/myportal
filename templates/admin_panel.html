@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}管理面板{% endblock %}
+{% block content %}
+<h1 style="text-align:center;color:#b22222">管理面板</h1>
+<div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin:20px">
+    <div style="background:#fff;padding:20px;border-radius:12px;text-align:center;min-width:120px">
+        <h3>文章数</h3><p style="font-size:2rem">{{ article_count }}</p>
+    </div>
+    <!-- 其余统计数据 -->
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:15px;justify-content:center;padding:20px">
+    <a href="/admin/approve_articles" class="card">📄 文章审核</a>
+    <!-- 其余链接 -->
+</div>
+{% if is_super and pend %}
+<h2 style="text-align:center">待审管理员</h2>
+<ul>...</ul>
+{% endif %}
+<style nonce="{{ csp_nonce }}">
+    .card{background:#fff;padding:20px;border-radius:12px;text-decoration:none;color:#333;box-shadow:0 2px 8px rgba(0,0,0,.1);min-width:140px;text-align:center;display:inline-block;}
+    body.dark-mode .card{background:#2c2c2c;color:#e0e0e0;}
+</style>
+{% endblock %}

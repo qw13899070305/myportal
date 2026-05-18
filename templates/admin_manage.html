@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>管理员管理</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><style nonce="{{ csp_nonce }}">body{font-family:system-ui,sans-serif;max-width:800px;margin:20px auto;padding:15px}
+body.dark-mode{background:#121212;color:#e0e0e0}
+.table-container{overflow-x:auto}table{width:100%;min-width:600px;border-collapse:collapse;margin-top:20px}th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}button{padding:5px 10px;cursor:pointer;margin:2px}.back-link{margin-bottom:20px;display:inline-block}
+#darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+#darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+</style></head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<h1>👥 管理员管理</h1><p><a href="/admin" class="back-link">← 返回管理面板</a></p><div class="table-container"><table><thead><tr><th>用户名</th><th>角色</th><th>操作</th></tr></thead><tbody>{% for a in admins %}<tr><td><img src="/avatar/{{ a.username }}" width="30" style="border-radius:50%;vertical-align:middle"> {{ a.username|e }}</td><td>{{ a.role|e }}</td><td>{% if a.username != current_user and is_super %}<form method="post" action="/admin/remove_admin" style="display:inline" onsubmit="return confirm('移除 {{ a.username|e }}？');"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="username" value="{{ a.username }}"><button type="submit" style="background:#f44336;color:#fff;border:none;border-radius:4px">❌ 移除</button></form>{% endif %}<button onclick="resetPassword('{{ a.username }}','admins')" style="background:#ff9800;color:#fff;border:none;border-radius:4px;cursor:pointer">🔑 重置密码</button></td></tr>{% endfor %}</tbody></table></div>
+<script nonce="{{ csp_nonce }}">
+function resetPassword(username, usertype) {
+    if (!confirm('确定重置 ' + username + ' 的密码？')) return;
+    fetch('/admin/reset_user_password', {
+        method:'POST',
+        headers:{
+            'Content-Type':'application/x-www-form-urlencoded',
+            'X-CSRF-Token': '{{ csrf_token }}',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'username=' + encodeURIComponent(username) + '&usertype=' + encodeURIComponent(usertype)
+    }).then(r=>r.text()).then(html => {
+        const win = window.open('', '_blank', 'width=400,height=300');
+        win.document.write(html);
+        win.document.close();
+    });
+}
+(function(){if(localStorage.getItem("darkMode")==="true") document.body.classList.add("dark-mode");})();
+function toggleDarkMode(){const isDark=document.body.classList.toggle("dark-mode");localStorage.setItem("darkMode",isDark);}
+</script>
+</body></html>

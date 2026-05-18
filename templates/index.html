@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>万象门户</title><style nonce="{{ csp_nonce }}">
+    body{font-family:system-ui,sans-serif;background:#f0f2f5;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
+    body.dark-mode{background:#1a1a1a}
+    body.dark-mode .btn{background:#2c2c2c;color:#e0e0e0;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+    body.dark-mode .btn .info p{color:#aaa}
+    body.dark-mode .bottom-links a{color:#ccc}
+    .container{width:100%;max-width:500px;display:flex;flex-direction:column;gap:15px}
+    .btn{display:flex;align-items:center;background:#fff;border-radius:16px;padding:24px 30px;text-decoration:none;color:#333;box-shadow:0 4px 20px rgba(0,0,0,.08);transition:transform .2s,box-shadow .2s}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 6px 24px rgba(0,0,0,.12)}
+    .btn .icon{font-size:2.5rem;margin-right:20px;width:60px;text-align:center;flex-shrink:0}
+    .btn .info h3{margin:0 0 4px;font-weight:600;font-size:1.2rem}
+    .btn .info p{margin:0;color:#888;font-size:.9rem}
+    .btn.external{background:#fafafa;border:2px dashed #ddd}
+    .bottom-links{text-align:center;margin-top:10px;display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+    .bottom-links a{color:#999;text-decoration:none;font-size:.85rem}
+    #darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+    #darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+</style></head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<div class="container">
+    <a href="/files" class="btn"><span class="icon">📂</span><div class="info"><h3>资源万象站</h3><p>文件分享、PDF预览、视频音频</p></div></a>
+    <a href="/news" class="btn"><span class="icon">📰</span><div class="info"><h3>左派 · 新闻栏</h3><p>阅读文章、青年发声</p></div></a>
+    <a href="/chat" class="btn"><span class="icon">💬</span><div class="info"><h3>聊天室</h3><p>实时交流，思想碰撞</p></div></a>
+    <a href="https://xinxinqingnian.github.io/" target="_blank" class="btn external"><span class="icon">🔗</span><div class="info"><h3>友情链接</h3><p>xinxinqingnian 项目主页</p></div></a>
+    <div class="bottom-links"><a href="/admin/login">🔐 管理员登录</a><a href="/apply_admin">👤 申请管理员</a>{% if notify_email %}<a href="mailto:{{ notify_email }}">📧 联系管理员</a>{% else %}<span>⚠️ 管理员未设置通知邮箱</span>{% endif %}</div>
+</div>
+<script nonce="{{ csp_nonce }}">
+(function(){
+    if(localStorage.getItem('darkMode')==='true') document.body.classList.add('dark-mode');
+})();
+function toggleDarkMode(){
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+}
+</script>
+</body></html>

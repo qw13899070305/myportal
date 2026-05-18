@@ -1,0 +1,53 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>我要发声 · 投稿</title><style nonce="{{ csp_nonce }}">body{font-family:"Noto Serif SC",serif;background:#1a1a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
+body.dark-mode{background:#121212}.dark-mode .box{background:#1e1e1e;color:#e0e0e0;border-color:#444}.box{background:#faf9f6;padding:40px;border-radius:8px;width:100%;max-width:700px;border:1px solid #d4a853}
+input,textarea,select{width:100%;padding:10px;margin:10px 0;border:1px solid #d4a853;border-radius:4px;background:#fdfcf8;font-family:system-ui;box-sizing:border-box}
+textarea{height:300px;font-family:"Noto Serif SC",serif}
+button{padding:10px 20px;margin:10px 0;border:1px solid #d4a853;border-radius:4px;background:#b22222;color:#fff;font-size:1rem;cursor:pointer;letter-spacing:3px;border:none}
+button:hover{background:#8b1a1a}
+.draft-btn{background:#666}.draft-btn:hover{background:#444}
+.tag-input{display:flex;gap:10px;margin:10px 0}.tag-input input{flex:1;margin:0}.tag-list{margin:5px 0;display:flex;flex-wrap:wrap;gap:5px}.tag{background:#f0e8d8;padding:2px 8px;border-radius:12px;font-size:.8rem}.tag-remove{cursor:pointer;margin-left:5px;color:#b22222}h2{text-align:center;color:#8b0000;letter-spacing:3px}a{color:#d4a853}.nav{text-align:center;margin-top:15px}
+#draftStatus{font-size:.8rem;color:#888;text-align:right}
+#darkModeFloating{position:fixed;bottom:20px;right:20px;z-index:9999}
+#darkModeFloating button{background:#333;color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.5rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+</style></head><body>
+<div id="darkModeFloating"><button onclick="toggleDarkMode()">🌓</button></div>
+<div class="box"><h2>✍️ 我要发声 · 投稿文章</h2><form method="post" id="articleForm"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input name="title" id="titleInput" placeholder="文章标题" required><select name="category"><option value="key">🔴 重点新闻</option><option value="fun">🎮 娱乐区</option>{% if can_internal %}<option value="internal">🔒 内部</option>{% endif %}</select><div class="tag-input"><input type="text" id="tagInput" placeholder="添加标签（最多5个）"><button type="button" onclick="addTag()" style="margin:0;padding:10px 15px;">+</button></div><input type="hidden" name="tags" id="tagsHidden"><div id="tagList" class="tag-list"></div><textarea name="content" id="contentInput" placeholder="写下你的声音... (支持 **粗体** 语法)" required></textarea>
+<div style="display:flex; gap:10px; margin:10px 0;">
+    <button type="submit" style="flex:1; margin:0;">提交投稿</button>
+    <button type="submit" name="save_draft" value="1" class="draft-btn" style="flex:1; margin:0;">保存草稿</button>
+</div>
+</form><div id="draftStatus"></div><div class="nav"><a href="/author/dashboard">返回仪表盘</a> | <a href="/news">← 返回文章广场</a></div></div><script nonce="{{ csp_nonce }}">let tags=[];function addTag(){const input=document.getElementById('tagInput'),val=input.value.trim();if(val&&!tags.includes(val)&&tags.length<5){tags.push(val);renderTags();input.value='';}}function removeTag(idx){tags.splice(idx,1);renderTags();}function renderTags(){const container=document.getElementById('tagList');container.innerHTML=tags.map((t,i)=>`<span class="tag">${escapeHtml(t)}<span class="tag-remove" onclick="removeTag(${i})">×</span></span>`).join('');document.getElementById('tagsHidden').value=tags.join(',');}function escapeHtml(str){return str.replace(/[&<>]/g,function(m){if(m==='&')return '&amp;';if(m==='<')return '&lt;';if(m==='>')return '&gt;';return m;});}
+let autosaveTimer;
+const titleInput = document.getElementById('titleInput');
+const contentInput = document.getElementById('contentInput');
+const statusDiv = document.getElementById('draftStatus');
+function autosave(){
+    const title = titleInput.value.trim();
+    const content = contentInput.value.trim();
+    if(!title && !content) return;
+    fetch('/author/draft/autosave', {
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'X-CSRF-Token': document.querySelector('input[name="csrf_token"]').value,
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({title, content, tags: tags.join(',')})
+    }).then(r=>r.json()).then(data=>{
+        if(data.success){
+            statusDiv.innerText = '草稿已自动保存 ' + new Date().toLocaleTimeString();
+        }
+    });
+}
+titleInput.addEventListener('input', ()=>{
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(autosave, 3000);
+});
+contentInput.addEventListener('input', ()=>{
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(autosave, 3000);
+});
+(function(){if(localStorage.getItem("darkMode")==="true") document.body.classList.add("dark-mode");})();
+function toggleDarkMode(){const isDark=document.body.classList.toggle("dark-mode");localStorage.setItem("darkMode",isDark);}
+</script>
+</body></html>

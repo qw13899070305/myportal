@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>作者内部权限管理</title><style nonce="{{ csp_nonce }}">
+body{font-family:system-ui;max-width:800px;margin:20px auto;padding:15px}
+body.dark-mode{background:#121212;color:#eee}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{padding:10px;border-bottom:1px solid #ddd}
+button{padding:5px 10px;cursor:pointer}
+.back-link{margin-bottom:20px;display:inline-block}
+</style></head><body>
+<h1>🛡️ 作者内部权限管理</h1><a href="/admin" class="back-link">← 返回管理面板</a>
+<table><thead><tr><th>用户名</th><th>内部权限</th><th>操作</th></tr></thead>
+<tbody>
+{% for a in authors %}
+<tr>
+    <td>{{ a.username }}</td>
+    <td>{{ '✅ 有权限' if a.can_access else '❌ 无权限' }}</td>
+    <td>
+        {% if a.can_access %}
+        <form method="post" action="/admin/revoke_internal" style="display:inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="username" value="{{ a.username }}"><button type="submit">取消权限</button></form>
+        {% else %}
+        <form method="post" action="/admin/grant_internal" style="display:inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="username" value="{{ a.username }}"><button type="submit">授予权限</button></form>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</body></html>
