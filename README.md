@@ -1,197 +1,268 @@
-# 万象门户 · 多功能内容管理平台
+# 🌐 万象门户 · 多功能内容管理平台
 # Vientiane Portal - Multi-functional Content Management Platform
 
-> 一个集文件共享、文章发布、实时聊天、管理后台于一体的综合型 Web 应用
-> An integrated web application with file sharing, article publishing, real-time chat and admin backend
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python">
+  <img src="https://img.shields.io/badge/Flask-2.3.3-red.svg" alt="Flask">
+  <img src="https://img.shields.io/badge/Socket.IO-5.3.4-yellow.svg" alt="Socket.IO">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
+  <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey.svg" alt="Platform">
+</p>
 
-## 主要功能 | Features
+<p align="center">
+  <strong>集文件共享、文章发布、实时聊天、管理后台于一体的综合型 Web 应用</strong>
+  <br>
+  <em>An integrated web application with file sharing, article publishing, real-time chat and admin backend</em>
+</p>
 
-### 资源万象站（文件中心）| File Center
-- 多格式文件在线预览（PDF、图片、音视频、Office文档、CHM、DjVu、纯文本等）
-- Online preview of various formats: PDF, images, audio/video, Office, CHM, DjVu, plain text...
-- 目录浏览与面包屑导航，支持分页
-- Directory browsing with breadcrumb navigation and pagination
-- 文件上传（游客需验证码，管理员可批量审批）
-- File upload (captcha for guests, admin approval for files)
-- 生成分享链接（可设置密码、过期时间）
-- Generate share links with password & expiration
-- 全文搜索（对文本类文件内容建立FTS5索引）
-- Full-text search inside text files (FTS5 index)
-- 文件夹打包下载为ZIP
-- Download folders as ZIP
-- 管理员文件管理（移动、删除、恢复、彻底删除）
-- Admin file management: move, delete, restore, permanent delete
+<details>
+<summary><strong>🇨🇳 中文介绍 · Click to expand</strong></summary>
 
-### 新闻栏（文章系统）| Articles
-- 多角色：作者（投稿）、读者（评论/点赞）、管理员（审核/管理）
-- Multi-role: authors (submit), readers (comment/like), admins (approve/manage)
-- 文章分类：重点新闻、娱乐区、内部文章（需授权访问）
-- Categories: news, entertainment, internal (requires permission)
-- Markdown支持（配合Bleach安全过滤）
-- Markdown support with Bleach sanitizer
-- 文章置顶、点赞、收藏、标签系统
-- Sticky, likes, bookmarks, tags
-- 嵌套评论 + 评论点赞
-- Nested comments with comment likes
-- 作者后台：文章列表、草稿箱、自动保存草稿、编辑资料、上传头像
-- Author dashboard: articles, drafts, autosave, profile, avatar
-- 邮件通知（审核通过/拒绝时自动发送）
-- Email notification on approval/rejection
-- 内部文章权限单独授予
-- Internal article permission can be granted separately
+## ✨ 核心特性
 
-### 聊天室（实时交流）| Chat Room
-- 基于Socket.IO的实时消息
-- Real-time messaging via Socket.IO
-- 消息撤回（5分钟内可撤回）
-- Message recall within 5 minutes
-- @提及通知（生成系统通知）
-- @mention notifications
-- 用户头像（自动生成字母头像或自定义上传）
-- Avatar: auto-generated or custom upload
-- 消息记录保留最近200条
-- Keep last 200 messages
-- 管理员可管理聊天用户及消息
-- Admin can manage users & messages
+| 功能 | 说明 |
+| :--- | :--- |
+| 📂 **资源万象站** | 多格式文件在线预览（PDF、图片、音视频、Office、CHM、DjVu、文本）、目录浏览、分页、打包下载 |
+| 🔗 **文件分享** | 生成带密码和过期时间的分享链接，支持提取码验证 |
+| 📰 **新闻栏（文章系统）** | 作者投稿、读者评论/点赞、管理员审核；支持 Markdown、标签、置顶、收藏、内部文章权限 |
+| 💬 **聊天室** | Socket.IO 实时消息，5 分钟内可撤回，@提及通知，头像系统，消息保留 200 条 |
+| 🔐 **管理员后台** | 仪表盘统计、文章/作者审核、文件管理、回收站、聊天管理、系统设置、审计日志 |
+| 🧩 **通用安全** | CSRF Token、CSP 策略、登录限流（5 次失败锁 15 分钟）、文件类型校验、HTML 清洗 |
+| 🌙 **暗色模式** | 前端本地存储，一键切换亮色/暗色主题 |
+| 🌐 **HTTPS 强制** | 通过环境变量 `FORCE_HTTPS=1` 开启，配合 Nginx 代理 |
 
-### 管理员后台 | Admin Panel
-- 仪表盘统计（文章数、待审数、用户数）
-- Dashboard statistics: articles, pending, users
-- 文章审核（预览、通过、拒绝）
-- Article approval: preview, approve, reject
-- 作者审核（批准/拒绝注册申请）
-- Author approval/denial
-- 作者内部权限管理（授予/撤销访问内部文章的能力）
-- Grant/revoke internal article access
-- 文件管理（全目录浏览、上传、移动、删除、分享链接）
-- Full file management: browse, upload, move, delete, share links
-- 缓存区管理（回收站，可恢复或彻底删除）
-- Trash management: restore or permanent delete
-- 聊天用户与消息管理
-- Chat users & messages management
-- 管理员管理（超级管理员可增删管理员）
-- Admin management (super admin only)
-- 系统设置（注册开关、验证码类型、SMTP邮件配置）
-- System settings: registration, captcha type, SMTP
-- 审计日志（记录关键操作）
-- Audit log
+## 🚀 快速启动
 
-### 通用特性 | Common Features
-- 安全防护：CSRF Token、CSP、X-Frame-Options、登录限流
-- Security: CSRF, CSP, X-Frame-Options, login throttling
-- 验证码：算术验证码 / 简单字符串（可配置）
-- Captcha: math or alphanumeric (configurable)
-- HTTPS强制（环境变量 FORCE_HTTPS=1）
-- Enforce HTTPS via FORCE_HTTPS=1
-- 暗色模式（前端本地存储，一键切换）
-- Dark mode (localStorage, one-click toggle)
-- 响应式布局（移动端适配）
-- Responsive design
+### 1. 环境准备
+- Python 3.8+
+- 安装系统依赖（可选，用于增强预览）：
+  ```bash
+  # Ubuntu/Debian
+  apt install -y libchm-bin djvulibre-bin
+  ```
 
-## 技术栈 | Tech Stack
+### 2. 安装 Python 依赖
+```bash
+pip install -r requirements.txt
+```
 
-| 类别 | 技术 |
-|------|------|
-| 后端框架 | Flask 2.3.3 + Flask-SocketIO 5.3.4 |
-| 实时通信 | Socket.IO（自动降级：eventlet → threading） |
-| 数据库 | SQLite3 + FTS5 全文扩展 |
-| 安全 | Werkzeug、bleach、secrets |
-| 文件处理 | filetype、zipfile、docx-preview / SheetJS |
-| 后台任务 | threading + watchdog |
-| 邮件 | smtplib（TLS） |
-| 前端 | 原生HTML/CSS/JS |
+### 3. 设置环境变量（可选）
+```bash
+export SECRET_KEY="your_secret_key"
+export FORCE_HTTPS=0
+export DEFAULT_ADMIN_PWD=""
+```
 
-## 项目结构 | Project Structure
+### 4. 启动服务
+```bash
+python app.py
+```
+默认监听 `[::]:8080`（IPv6 + IPv4）。访问 `http://localhost:8080` 即可。
+
+### 5. 使用 HTTPS + Nginx 代理（推荐生产环境）
+```nginx
+server {
+    listen 443 ssl;
+    server_name your-domain.com;
+    # SSL 证书配置...
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+```
+
+## 📁 项目结构
 
 ```
-├── app.py                 # 主入口
-├── config.py              # 统一配置
-├── models.py              # 数据库模型
-├── utils.py               # 通用工具
-├── file_indexer.py        # 文件索引与监控
-├── requirements.txt       # Python依赖
+├── app.py                 # 主入口，注册蓝图、启动服务、CSRF/CSP 中间件
+├── config.py              # 全局配置（路径、扩展名、分页、预览类型）
+├── models.py              # 数据库表定义与初始化
+├── utils.py               # 通用工具（验证码、限流、密码哈希、安全路径、审计日志）
+├── file_indexer.py        # 文本文件内容索引（FTS5）与 watchdog 实时监控
+├── requirements.txt       # Python 依赖
 ├── blueprints/
 │   ├── __init__.py        # 蓝图注册
 │   ├── admin.py           # 管理员后台
 │   ├── author.py          # 作者模块
-│   ├── chat.py            # 聊天室
-│   ├── files.py           # 文件管理
-│   └── news.py            # 文章系统
-├── templates/             # HTML模板
-├── shared_files/          # 共享文件根目录
-├── uploads_pending/       # 待审文件临时目录
+│   ├── chat.py            # 聊天室（Socket.IO 事件）
+│   ├── files.py           # 文件浏览、预览、上传、分享链接
+│   └── news.py            # 文章广场、内部文章
+├── templates/             # 所有 HTML 模板（需从 app.txt 常量中提取）
+├── shared_files/          # 共享文件根目录（自动创建）
+├── uploads_pending/       # 待审核文件临时目录
 ├── trash/                 # 回收站
 ├── avatars/               # 用户头像
-├── data.db                # SQLite数据库
+├── data.db                # SQLite 数据库
 └── audit.log              # 审计日志
 ```
 
-> 模板文件说明：所有HTML模板原存放于app.txt中的常量，需提取到templates/目录下。
+> **模板文件说明**：所有 HTML 模板内容原存放于 `app.txt` 中的常量（如 `INDEX_HTML`、`FILES_HTML` 等）。您需要将这些常量分别保存为 `templates/` 下对应的文件名（参考蓝图中的 `render_template` 调用名称），或直接运行旧版单文件模式。
 
-## 快速部署 | Quick Deployment
+## ⚙️ 重要配置
 
-1. 环境准备：Python 3.8+
-   Prerequisites: Python 3.8+
+| 配置项 | 说明 | 位置 |
+|--------|------|------|
+| `MAX_CONTENT_LENGTH` | 最大上传大小（默认 30GB） | `config.py` |
+| `ITEMS_PER_PAGE` | 文件列表分页大小（默认 20） | `config.py` |
+| `ARTICLES_PER_PAGE` | 文章列表分页大小（默认 10） | `config.py` |
+| `ALLOWED_EXTENSIONS` | 普通用户允许上传的扩展名 | `config.py` |
+| `ADMIN_ALLOWED_EXTENSIONS` | 管理员允许上传的扩展名 | `config.py` |
+| 邮件通知 | SMTP 服务器、端口、用户名、密码 | 后台系统设置 |
+| 注册开关 | 是否允许新用户注册 | 后台系统设置 |
 
-2. 安装系统依赖（可选）：
-   Install system dependencies (optional):
-   ```bash
-   apt install -y libchm-bin djvulibre-bin
-   ```
+## 🔒 安全要点
 
-3. 安装Python依赖：
-   Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+- ✅ 所有 POST 请求均需携带 CSRF Token（部分公开接口除外）
+- ✅ 登录失败 5 次即锁定 15 分钟（基于 IP）
+- ✅ 密码存储使用 Werkzeug 的 `generate_password_hash`（bcrypt 或 pbkdf2）
+- ✅ 支持旧 SHA256 哈希自动升级为安全哈希
+- ✅ 文件上传通过 `filetype` 校验真实类型，防止伪造 MIME
+- ✅ 文章内容经 Bleach 清洗，防止 XSS 攻击
+- ✅ CSP 内容安全策略限制脚本和样式来源
+- ✅ 强制 HTTPS 选项（生产环境推荐开启）
 
-4. 设置环境变量（可选）：
-   Set environment variables (optional):
-   ```bash
-   export SECRET_KEY="your_secret_key"
-   export FORCE_HTTPS=0
-   export DEFAULT_ADMIN_PWD=""
-   ```
+## 🧪 扩展建议
 
-5. 启动服务：
-   Start the server:
-   ```bash
-   python app.py
-   ```
+- **生产环境**：使用 `eventlet` 或 `gunicorn + gevent` 提高并发性能
+- **数据库**：将 SQLite 替换为 PostgreSQL（需改写 `get_db` 和部分查询）
+- **文件存储**：增加对象存储（如 MinIO、OSS）替代本地存储
+- **会话管理**：使用 Redis 管理 Socket.IO 会话（多进程部署）
+- **日志监控**：集成 Sentry 或 ELK 进行错误跟踪
 
-6. 访问：http://你的IP:8080
-   Access: http://your-ip:8080
+## 📄 许可证
 
-## 重要配置 | Configuration
+本项目采用 [MIT License](LICENSE)，欢迎自由使用、修改和分发。
 
-- 最大上传大小：`MAX_CONTENT_LENGTH`（默认30GB）
-- 分页数量：`ITEMS_PER_PAGE`、`ARTICLES_PER_PAGE`
-- 允许的文件类型：`ALLOWED_EXTENSIONS`、`ADMIN_ALLOWED_EXTENSIONS`
-- 邮件通知：需在后台填写SMTP配置
-- 注册开关：后台系统设置
+</details>
 
-## 安全要点 | Security Highlights
+<details>
+<summary><strong>🇬🇧 English · Click to expand</strong></summary>
 
-- 所有POST请求需CSRF Token
-- 登录失败5次锁定15分钟（基于IP）
-- 密码使用Werkzeug安全哈希
-- 文件上传通过filetype校验真实类型
-- 文章内容经Bleach清洗防XSS
-- CSP内容安全策略
-- 强制HTTPS选项
+## ✨ Core Features
 
-## 扩展建议 | Extension Suggestions
+| Feature | Description |
+| :--- | :--- |
+| 📂 **File Center** | Online preview of various formats (PDF, images, audio/video, Office, CHM, DjVu, text), directory browsing, pagination, folder ZIP download |
+| 🔗 **File Sharing** | Create share links with password & expiration, password-protected downloads |
+| 📰 **Article System** | Authors submit, readers comment/like, admin approval; Markdown, tags, sticky, bookmarks, internal articles with separate permission |
+| 💬 **Chat Room** | Real-time messaging via Socket.IO, message recall (5 min), @mentions, avatars, last 200 messages kept |
+| 🔐 **Admin Panel** | Dashboard stats, article/author approval, file management, trash, chat management, system settings, audit log |
+| 🧩 **Security** | CSRF token, CSP headers, login throttling (5 fails lock 15 min), file type validation, HTML sanitization |
+| 🌙 **Dark Mode** | LocalStorage toggle, one‑click switch |
+| 🌐 **HTTPS Enforce** | Enabled via `FORCE_HTTPS=1`, works with Nginx reverse proxy |
 
-- 生产环境使用eventlet或gunicorn+gevent
-- 替换SQLite为PostgreSQL
-- 使用对象存储（MinIO/OSS）替代本地存储
-- 使用Redis管理Socket.IO会话（多进程部署）
+## 🚀 Quick Start
 
-## 许可证 | License
+### 1. Prerequisites
+- Python 3.8+
+- Install system dependencies (optional, for enhanced preview):
+  ```bash
+  # Ubuntu/Debian
+  apt install -y libchm-bin djvulibre-bin
+  ```
 
-本项目未附带明确许可证，建议您添加合适的开源许可证（如MIT、GPLv3）。
+### 2. Install Python dependencies
+```bash
+pip install -r requirements.txt
+```
 
----
+### 3. Set environment variables (optional)
+```bash
+export SECRET_KEY="your_secret_key"
+export FORCE_HTTPS=0
+export DEFAULT_ADMIN_PWD=""
+```
 
-**万象门户** —— 让分享与思想自由流动。
-**Vientiane Portal** —— Let sharing and ideas flow freely.
+### 4. Start the server
+```bash
+python app.py
+```
+Default listens on `[::]:8080` (IPv6 + IPv4). Visit `http://localhost:8080`.
+
+### 5. Use HTTPS + Nginx (recommended for production)
+```nginx
+server {
+    listen 443 ssl;
+    server_name your-domain.com;
+    # SSL certificate configuration...
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+```
+
+## 📁 Project Structure
+
+```
+├── app.py                 # Main entry, blueprint registration, CSRF/CSP middleware
+├── config.py              # Global configuration (paths, extensions, pagination)
+├── models.py              # Database table definitions & initialization
+├── utils.py               # Utilities (captcha, throttling, password hashing, safe path, audit log)
+├── file_indexer.py        # Text file indexing (FTS5) + watchdog monitor
+├── requirements.txt       # Python dependencies
+├── blueprints/
+│   ├── __init__.py        # Blueprint registration
+│   ├── admin.py           # Admin backend
+│   ├── author.py          # Author module
+│   ├── chat.py            # Chat room (Socket.IO events)
+│   ├── files.py           # File browsing, preview, upload, share links
+│   └── news.py            # Article list, internal articles, comments
+├── templates/             # All HTML templates (extract from app.txt constants)
+├── shared_files/          # Shared files root (auto-created)
+├── uploads_pending/       # Pending file uploads
+├── trash/                 # Recycle bin
+├── avatars/               # User avatars
+├── data.db                # SQLite database
+└── audit.log              # Audit log
+```
+
+> **Template note**: All HTML templates are originally embedded as constants in `app.txt` (e.g., `INDEX_HTML`, `FILES_HTML`). You need to extract them into `templates/` with the corresponding filenames (refer to `render_template` calls in blueprints), or run the original single‑file version.
+
+## ⚙️ Configuration
+
+| Option | Description | Location |
+|--------|-------------|----------|
+| `MAX_CONTENT_LENGTH` | Max upload size (default 30GB) | `config.py` |
+| `ITEMS_PER_PAGE` | Files per page (default 20) | `config.py` |
+| `ARTICLES_PER_PAGE` | Articles per page (default 10) | `config.py` |
+| `ALLOWED_EXTENSIONS` | Extensions allowed for guests | `config.py` |
+| `ADMIN_ALLOWED_EXTENSIONS` | Extensions allowed for admins | `config.py` |
+| Email notification | SMTP server, port, user, password | Admin backend settings |
+| Registration toggle | Enable/disable new user registration | Admin backend settings |
+
+## 🔒 Security Highlights
+
+- ✅ All POST requests require CSRF token (except whitelisted endpoints)
+- ✅ 5 failed logins → 15 minutes lock (IP‑based)
+- ✅ Passwords hashed with Werkzeug (bcrypt/pbkdf2)
+- ✅ Legacy SHA256 hashes automatically upgraded
+- ✅ File uploads validated by `filetype` (MIME mismatch rejection)
+- ✅ Article content sanitized with Bleach (XSS protection)
+- ✅ CSP headers restrict script/style sources
+- ✅ Optional HTTPS enforcement (`FORCE_HTTPS=1`)
+
+## 🧪 Extension Suggestions
+
+- **Production**：Use `eventlet` or `gunicorn + gevent` for higher concurrency
+- **Database**：Replace SQLite with PostgreSQL (rewrite `get_db` & queries)
+- **File storage**：Add object storage (MinIO, OSS) instead of local disk
+- **Session management**：Use Redis for Socket.IO (multi‑process deployment)
+- **Monitoring**：Integrate Sentry or ELK for error tracking
+
+## 📄 License
+
+This project is open‑sourced under the [MIT License](LICENSE). Feel free to use, modify, and distribute.
+
+</details>
